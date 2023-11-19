@@ -1,10 +1,12 @@
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Image;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
+import java.io.File;
 
+import javax.sound.sampled.*;
 import javax.sound.sampled.Clip;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -95,6 +97,8 @@ public class BubbleEat extends JFrame {
 
         bubbleX = (int) (Math.random() * (501 - playerWidth));
         bubbleY = (int) (Math.random() * (501 - playerHeight - 30)) + 30;  // 점수 초기화, 플레이어와 코인 위치 설정
+
+        playSound("C:\\Users\\user\\Desktop\\Main.java\\BubbleEat\\src\\audio\\background.wav", true);
     }
 
     public void keyProcess() {
@@ -108,11 +112,37 @@ public class BubbleEat extends JFrame {
         if (playerX + playerWidth > bubbleX && bubbleX + bubbleWidth > playerX && playerY + playerHeight > bubbleY
                 && bubbleY + bubbleHeight > playerY) {
             score += 10;
+            playSound("C:\\Users\\user\\Desktop\\Main.java\\BubbleEat\\src\\audio\\pop.wav", false);
             bubbleX = (int) (Math.random() * (501 - playerWidth));
             bubbleY = (int) (Math.random() * (501 - playerHeight - 30)) + 30;
             repaint();
         }
     }   // 플레이어와 코인 충돌 체크
+
+    public void playSound(String audio, boolean isLoop) {
+        try {
+            clip = AudioSystem.getClip();
+            File audioFile = new File(audio);
+            AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioFile);
+            clip.open(audioStream);
+            if (audio.equals("C:\\Users\\user\\Desktop\\Main.java\\BubbleEat\\src\\audio\\background.wav")) {
+                // FloatControl을 사용하여 볼륨을 가져오고 조절
+                FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+                float dB = -10.0f;
+                gainControl.setValue(dB);
+            }
+
+            clip.start();
+            if (isLoop)
+                clip.loop(Clip.LOOP_CONTINUOUSLY);
+        } catch (LineUnavailableException e) {
+            e.printStackTrace();
+        } catch (UnsupportedAudioFileException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }	// 오디오 재생
 
     public void paint(Graphics g) {
         bufferImage = createImage(500, 500);
