@@ -5,13 +5,11 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.io.File;
-import javax.swing.Timer;
 
 import javax.sound.sampled.*;
 import javax.sound.sampled.Clip;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
-
 
 public class BubbleEat extends JFrame {
 
@@ -24,12 +22,11 @@ public class BubbleEat extends JFrame {
     private Image background = new ImageIcon("C:\\Users\\user\\Desktop\\Main.java\\BubbleEat\\src\\image\\mainScreen.png").getImage();
     private Image player = new ImageIcon("C:\\Users\\user\\Desktop\\Main.java\\BubbleEat\\src\\image\\player.png").getImage();
     private Image bubble = new ImageIcon("C:\\Users\\user\\Desktop\\Main.java\\BubbleEat\\src\\image\\bubble.png").getImage();
-    private Image bubblepop = new ImageIcon("C:\\Users\\user\\Desktop\\Main.java\\BubbleEat\\src\\image\\bubblepop.png").getImage();
 
     private int playerX, playerY;   // 플레이어 위치
     private int playerWidth = player.getWidth(null);
     private int playerHeight = player.getHeight(null);  // 플레이어 가로, 세로 크기
-    private int bubbleX, bubbleY;   // 버블 위치
+    private int bubbleX, bubbleY;   // 코인 위치
     private int bubbleWidth = bubble.getWidth(null);
     private int bubbleHeight = bubble.getHeight(null);  // 코인 가로, 세로 크기
 
@@ -47,16 +44,16 @@ public class BubbleEat extends JFrame {
         addKeyListener(new KeyAdapter() {
             public void keyPressed(KeyEvent e) {
                 switch (e.getKeyCode()) {
-                    case KeyEvent.VK_UP:
+                    case KeyEvent.VK_W:
                         up = true;
                         break;
-                    case KeyEvent.VK_DOWN:
+                    case KeyEvent.VK_S:
                         down = true;
                         break;
-                    case KeyEvent.VK_LEFT:
+                    case KeyEvent.VK_A:
                         left = true;
                         break;
-                    case KeyEvent.VK_RIGHT:
+                    case KeyEvent.VK_D:
                         right = true;
                         break;
                 }
@@ -64,16 +61,16 @@ public class BubbleEat extends JFrame {
 
             public void keyReleased(KeyEvent e) {
                 switch (e.getKeyCode()) {
-                    case KeyEvent.VK_UP:
+                    case KeyEvent.VK_W:
                         up = false;
                         break;
-                    case KeyEvent.VK_DOWN:
+                    case KeyEvent.VK_S:
                         down = false;
                         break;
-                    case KeyEvent.VK_LEFT:
+                    case KeyEvent.VK_A:
                         left = false;
                         break;
-                    case KeyEvent.VK_RIGHT:
+                    case KeyEvent.VK_D:
                         right = false;
                         break;
                 }
@@ -115,33 +112,12 @@ public class BubbleEat extends JFrame {
         if (playerX + playerWidth > bubbleX && bubbleX + bubbleWidth > playerX && playerY + playerHeight > bubbleY
                 && bubbleY + bubbleHeight > playerY) {
             score += 10;
-            try {
-                bubble = bubblepop;
-                playSound("C:\\Users\\user\\Desktop\\Main.java\\BubbleEat\\src\\audio\\pop.wav", false);
-                repaint();
-                Thread.sleep(200);
-            } catch (InterruptedException e) {
-                // InterruptedException 처리
-            }
-            bubble = new ImageIcon("C:\\Users\\user\\Desktop\\Main.java\\BubbleEat\\src\\image\\bubble.png").getImage();
-
+            playSound("C:\\Users\\user\\Desktop\\Main.java\\BubbleEat\\src\\audio\\pop.wav", false);
             bubbleX = (int) (Math.random() * (501 - playerWidth));
             bubbleY = (int) (Math.random() * (501 - playerHeight - 30)) + 30;
-
-          Timer timer = new Timer(300, new ActionListener() {
-               @Override
-                public void actionPerformed(ActionEvent e) {
-                    bubble = new ImageIcon("C:\\Users\\user\\Desktop\\Main.java\\BubbleEat\\src\\image\\bubble.png").getImage();
-                    repaint();
-                }
-            });
-            timer.setRepeats(false);
-            timer.start();
-
-            bubbleX = (int) (Math.random() * (501 - playerWidth));
-            bubbleY = (int) (Math.random() * (501 - playerHeight - 30)) + 30;
+            repaint();
         }
-    }   // 플레이어와 버블 충돌 체크
+    }   // 플레이어와 코인 충돌 체크
 
     public void playSound(String audio, boolean isLoop) {
         try {
